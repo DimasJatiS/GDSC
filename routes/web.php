@@ -9,3 +9,7 @@ Route::get('/', function () {
 Route::get('/where', function () {
     return base_path();
 });
+
+Route::get('/api-catalog', function () {
+    return view('api-catalog');
+});

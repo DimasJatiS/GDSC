@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OpenAPI\Annotations as OA;
 
 class Menu extends Model
-{
+{   
+
     protected $fillable = [
         'name', 'category', 'calories',
         'price', 'ingredients', 'description',

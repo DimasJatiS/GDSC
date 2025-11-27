@@ -15,10 +15,33 @@ use App\Http\Resources\MenuResource;
 use App\Http\Resources\MenuCollection;
 
 use App\Helpers\ApiResponse;
+use OpenApi\Annotations as OA;
 
+/**
+ * @OA\Tag(
+ *     name="Menu",
+ *     description="API untuk manajemen menu makanan"
+ * )
+ */
 class MenuController extends Controller
 {
-
+    /**
+     * @OA\Post(
+     *     path="/menu",
+     *     tags={"Menu"},
+     *     summary="Create new menu",
+     *     description="Membuat menu baru sekaligus memanggil Gemini AI untuk analisis menu.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/MenuStoreRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Menu created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/MenuResponse")
+     *     )
+     * )
+     */
     // POST /menu
     public function store(StoreMenuRequest $request, GeminiService $gemini)
     {
@@ -46,6 +69,26 @@ class MenuController extends Controller
         'Menu created successfully');
     }
 
+    /**
+     * @OA\Get(
+     *     path="/menu",
+     *     tags={"Menu"},
+     *     summary="Get paginated list of menu",
+     *     @OA\Parameter(name="q", in="query", description="Search keyword", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="category", in="query", description="Filter by category", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="min_price", in="query", @OA\Schema(type="number")),
+     *     @OA\Parameter(name="max_price", in="query", @OA\Schema(type="number")),
+     *     @OA\Parameter(name="max_cal", in="query", @OA\Schema(type="number")),
+     *     @OA\Parameter(name="sort", in="query", description="field:direction (e.g. price:desc)", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of menu",
+     *         @OA\JsonContent(ref="#/components/schemas/MenuCollectionResponse")
+     *     )
+     * )
+     */
     // GET /menu
     public function index(Request $request)
     {
@@ -83,6 +126,16 @@ class MenuController extends Controller
         return new MenuCollection($paginator);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/menu/{id}",
+     *     tags={"Menu"},
+     *     summary="Get single menu by ID",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Success", @OA\JsonContent(ref="#/components/schemas/MenuResponse")),
+     *     @OA\Response(response=404, description="Menu not found")
+     * )
+     */
     // GET /menu/:id
     public function show($id)
     {
@@ -95,6 +148,24 @@ class MenuController extends Controller
         return ApiResponse::success(new MenuResource($menu));
     }
 
+    /**
+     * @OA\Put(
+     *     path="/menu/{id}",
+     *     tags={"Menu"},
+     *     summary="Update menu",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/MenuUpdateRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Menu updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/MenuResponse")
+     *     ),
+     *     @OA\Response(response=404, description="Menu not found")
+     * )
+     */
     // PUT /menu/:id
     public function update(UpdateMenuRequest $request, $id)
     {
@@ -110,6 +181,16 @@ class MenuController extends Controller
             ->additional(['message' => 'Menu updated successfully']);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/menu/{id}",
+     *     tags={"Menu"},
+     *     summary="Delete menu",
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
+     *     @OA\Response(response=200, description="Menu deleted successfully"),
+     *     @OA\Response(response=404, description="Menu not found")
+     * )
+     */
     // DELETE /menu/:id
     public function destroy($id)
     {
@@ -124,6 +205,20 @@ class MenuController extends Controller
         return ApiResponse::success(null, 'Menu deleted successfully');
     }
 
+    /**
+     * @OA\Get(
+     *     path="/menu/group-by-category",
+     *     tags={"Menu"},
+     *     summary="Group menu by category",
+     *     @OA\Parameter(name="mode", in="query", @OA\Schema(type="string"), description="count | list"),
+     *     @OA\Parameter(name="per_category", in="query", @OA\Schema(type="integer")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Grouped result",
+     *         @OA\JsonContent(ref="#/components/schemas/MenuGroupedResponse")
+     *     )
+     * )
+     */
     // GET /menu/group-by-category
     public function groupByCategory(Request $request)
     {
@@ -164,6 +259,21 @@ class MenuController extends Controller
         return response()->json(['data' => $result]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/menu/search",
+     *     tags={"Menu"},
+     *     summary="Search menu (simple search)",
+     *     @OA\Parameter(name="q", in="query", @OA\Schema(type="string")),
+     *     @OA\Parameter(name="page", in="query", @OA\Schema(type="integer")),
+     *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer")),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Search result",
+     *         @OA\JsonContent(ref="#/components/schemas/MenuCollectionResponse")
+     *     )
+     * )
+     */
     // GET /menu/search
     public function search(Request $request)
     {
