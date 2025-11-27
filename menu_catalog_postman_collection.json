@@ -1,0 +1,537 @@
+{
+  "info": {
+    "_postman_id": "menu-catalog-api-2025-11-23T05:47:53.146964",
+    "name": "Menu Catalog API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Menu",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Es Kopi Susu\",\n  \"category\": \"drinks\",\n  \"calories\": 180,\n  \"price\": 25000,\n  \"ingredients\": [\n    \"coffee\",\n    \"milk\",\n    \"ice\",\n    \"sugar\"\n  ],\n  \"description\": \"Classic iced coffee with milk\"\n}"
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Menu created and id exists\", function () {",
+              "    pm.expect(json.data).to.have.property(\"id\");",
+              "    pm.collectionVariables.set(\"menu_id\", json.data.id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Menu - basic",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu"
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Success flag is true\", function () {",
+              "    pm.expect(json.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List Menu - with filters & pagination",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "kopi"
+            },
+            {
+              "key": "category",
+              "value": "drinks"
+            },
+            {
+              "key": "min_price",
+              "value": "10000"
+            },
+            {
+              "key": "max_price",
+              "value": "50000"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "per_page",
+              "value": "10"
+            },
+            {
+              "key": "sort",
+              "value": "price:asc"
+            }
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Success flag is true\", function () {",
+              "    pm.expect(json.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Menu by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu/{{menu_id}}",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu",
+            "{{menu_id}}"
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Success flag is true\", function () {",
+              "    pm.expect(json.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Menu (PUT)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu/{{menu_id}}",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu",
+            "{{menu_id}}"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Es Kopi Susu Premium\",\n  \"category\": \"drinks\",\n  \"calories\": 190,\n  \"price\": 30000,\n  \"ingredients\": [\n    \"coffee\",\n    \"milk\",\n    \"ice\",\n    \"condensed_milk\"\n  ],\n  \"description\": \"Premium recipe\"\n}"
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Success flag is true\", function () {",
+              "    pm.expect(json.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete Menu",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu/{{menu_id}}",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu",
+            "{{menu_id}}"
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Success flag is true\", function () {",
+              "    pm.expect(json.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Group By Category - counts",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu/group-by-category",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu",
+            "group-by-category"
+          ],
+          "query": [
+            {
+              "key": "mode",
+              "value": "count"
+            }
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Success flag is true\", function () {",
+              "    pm.expect(json.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Group By Category - list",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu/group-by-category",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu",
+            "group-by-category"
+          ],
+          "query": [
+            {
+              "key": "mode",
+              "value": "list"
+            },
+            {
+              "key": "per_category",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Success flag is true\", function () {",
+              "    pm.expect(json.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search Menu",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu/search",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "q",
+              "value": "kopi"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "per_page",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Success flag is true\", function () {",
+              "    pm.expect(json.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI Suggest Manual",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu/ai-suggest",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu",
+            "ai-suggest"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Green Tea Latte\",\n  \"ingredients\": [\n    \"green tea powder\",\n    \"milk\",\n    \"sugar\"\n  ]\n}"
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "const json = pm.response.json();",
+              "pm.test(\"Success flag is true\", function () {",
+              "    pm.expect(json.success).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Not Found Menu (ID 99999)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/menu/99999",
+          "host": [
+            "{{BASE_URL}}"
+          ],
+          "path": [
+            "menu",
+            "99999"
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "menu_id",
+      "value": "1",
+      "type": "string"
+    }
+  ]
+}
