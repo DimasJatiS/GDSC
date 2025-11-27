@@ -49,7 +49,7 @@ php artisan key:generate
 Configure database in `.env`:
 
 ```env
-DB_DATABASE=yourdb
+DB_DATABASE=GDSC
 DB_USERNAME=root
 DB_PASSWORD=
 ```
